@@ -1,0 +1,51 @@
+.project-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--line);
+
+  &:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+
+  &__index {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--ink-faint);
+    width: 40px;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    flex: 1;
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      color var(--dur-base) ease;
+  }
+
+  &:hover &__title {
+    transform: translateX(14px);
+    color: var(--clay);
+  }
+
+  &__meta {
+    display: flex;
+    gap: var(--space-8);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 720px) {
+    &__meta {
+      display: none;
+    }
+  }
+}

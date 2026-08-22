@@ -1,0 +1,60 @@
+.about {
+  background: var(--paper-2);
+  border-top: 1px solid var(--line);
+
+  &__head {
+    margin-bottom: var(--space-16);
+  }
+
+  &__heading {
+    font-style: italic;
+    font-size: var(--fs-2xl);
+    margin-top: var(--space-3);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: var(--space-16);
+
+    @media (max-width: 860px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__lede {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--fs-lg);
+    margin-bottom: var(--space-6);
+  }
+
+  &__timeline {
+    margin-top: var(--space-12);
+
+    li {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: var(--space-6);
+      padding: var(--space-4) 0;
+      border-top: 1px solid var(--line);
+
+      &:last-child {
+        border-bottom: 1px solid var(--line);
+      }
+
+      span:last-child {
+        display: block;
+        font-size: var(--fs-sm);
+        color: var(--ink-soft);
+        margin-top: var(--space-1);
+      }
+    }
+  }
+
+  &__year {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--clay);
+  }
+}

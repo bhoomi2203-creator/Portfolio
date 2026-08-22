@@ -1,0 +1,22 @@
+.site-footer {
+  background: var(--ink);
+  color: var(--ink-soft);
+  padding: var(--space-6) var(--page-gutter);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-top: 1px solid var(--line);
+
+  button {
+    color: inherit;
+    transition: color var(--dur-fast) ease;
+
+    &:hover {
+      color: var(--paper);
+    }
+  }
+}

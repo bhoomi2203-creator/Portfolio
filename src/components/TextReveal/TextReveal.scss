@@ -1,0 +1,11 @@
+.text-reveal {
+  &__line {
+    display: block;
+    overflow: hidden;
+  }
+
+  &__inner {
+    display: block;
+    transform: translateY(110%);
+  }
+}

@@ -1,0 +1,9 @@
+.floating-object {
+  position: absolute;
+  pointer-events: none;
+  will-change: transform;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}

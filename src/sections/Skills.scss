@@ -1,0 +1,92 @@
+.skills {
+  &__head {
+    margin-bottom: var(--space-16);
+  }
+
+  &__heading {
+    font-style: italic;
+    font-size: var(--fs-2xl);
+    margin-top: var(--space-3);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--space-12);
+    align-items: start;
+
+    @media (max-width: 860px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__list li {
+    padding: var(--space-6) 0;
+    border-top: 1px solid var(--line);
+    cursor: default;
+
+    &:last-child {
+      border-bottom: 1px solid var(--line);
+    }
+  }
+
+  &__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  &__name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+    color: var(--ink-soft);
+    transition: color var(--dur-fast) ease, transform var(--dur-fast) ease;
+  }
+
+  li.active &__name {
+    color: var(--ink);
+    transform: translateX(8px);
+  }
+
+  &__num {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--ink-faint);
+  }
+
+  &__desc {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    font-size: var(--fs-sm);
+    color: var(--ink-soft);
+    transition: max-height var(--dur-base) ease, opacity var(--dur-fast) ease, margin var(--dur-base) ease;
+  }
+
+  li.active &__desc {
+    max-height: 80px;
+    opacity: 1;
+    margin-top: var(--space-2);
+  }
+
+  &__visual {
+    position: sticky;
+    top: 120px;
+    aspect-ratio: 4 / 5;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--fs-lg);
+
+    @media (max-width: 860px) {
+      position: relative;
+      top: 0;
+      aspect-ratio: 16 / 9;
+    }
+  }
+}

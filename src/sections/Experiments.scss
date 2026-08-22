@@ -1,0 +1,15 @@
+.experiments {
+  border-top: 1px solid var(--line);
+
+  &__heading {
+    font-style: italic;
+    font-size: var(--fs-2xl);
+    margin-top: var(--space-3);
+  }
+
+  &__note {
+    margin-top: var(--space-6);
+    color: var(--ink-soft);
+    max-width: 46ch;
+  }
+}

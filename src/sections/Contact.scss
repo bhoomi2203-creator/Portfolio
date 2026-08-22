@@ -1,0 +1,56 @@
+.contact {
+  padding-block: var(--space-40) var(--space-16);
+  background: var(--ink);
+  color: var(--paper);
+
+  &__title {
+    font-size: var(--fs-3xl);
+    line-height: 0.94;
+    margin-top: var(--space-6);
+  }
+
+  &__title-accent {
+    display: block;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--clay);
+  }
+
+  &__bottom {
+    margin-top: var(--space-16);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    border-top: 1px solid var(--line);
+    padding-top: var(--space-6);
+  }
+
+  &__email {
+    font-family: var(--font-mono);
+    font-size: var(--fs-md);
+    border-color: var(--line);
+    color: var(--paper);
+
+    &:hover {
+      border-color: var(--clay);
+      color: var(--clay);
+    }
+  }
+
+  &__social {
+    display: flex;
+    gap: var(--space-6);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.75;
+
+    a:hover {
+      opacity: 1;
+      color: var(--clay);
+    }
+  }
+}

@@ -1,0 +1,67 @@
+:root {
+  --paper: #f2ecdd;
+  --paper-2: #e9e1cc;
+  --ink: #15130f;
+  --ink-soft: #55503f;
+  --ink-faint: #8a8471;
+  --moss: #4b5d3a;
+  --moss-soft: #6b7d54;
+  --clay: #a8583b;
+  --line: rgba(21, 19, 15, 0.14);
+  --line-strong: rgba(21, 19, 15, 0.28);
+  --overlay: rgba(21, 19, 15, 0.6);
+
+  --font-display: 'Instrument Serif', serif;
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.125rem;
+  --fs-lg: 1.5rem;
+  --fs-xl: clamp(2rem, 4vw, 3rem);
+  --fs-2xl: clamp(2.75rem, 6vw, 5rem);
+  --fs-3xl: clamp(3.5rem, 10vw, 9rem);
+
+  --lh-tight: 0.95;
+  --lh-snug: 1.25;
+  --lh-normal: 1.6;
+  --lh-relaxed: 1.85;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+  --space-40: 10rem;
+
+  --page-gutter: clamp(20px, 5vw, 64px);
+  --max-width: 1600px;
+  --nav-height: 76px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 0.25s;
+  --dur-base: 0.5s;
+  --dur-slow: 0.9s;
+
+  --z-cursor: 9999;
+  --z-preloader: 9000;
+  --z-nav: 500;
+  --z-transition: 800;
+  --z-overlay: 400;
+}
+
+.on-dark {
+  --ink: var(--paper);
+  --ink-soft: #c9c3ae;
+  --line: rgba(242, 236, 221, 0.16);
+}

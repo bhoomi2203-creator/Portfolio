@@ -1,0 +1,24 @@
+.works {
+  border-top: 1px solid var(--line);
+
+  &__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-16);
+  }
+
+  &__heading {
+    font-style: italic;
+    font-size: var(--fs-2xl);
+    margin-top: var(--space-3);
+  }
+
+  &__count {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    color: var(--ink-soft);
+  }
+}

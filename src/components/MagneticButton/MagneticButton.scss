@@ -1,0 +1,23 @@
+.magnetic-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.04em;
+  background: transparent;
+  color: var(--ink);
+  transition: border-color var(--dur-fast) ease;
+
+  &:hover {
+    border-color: var(--ink);
+  }
+
+  &__inner {
+    display: block;
+    pointer-events: none;
+  }
+}
