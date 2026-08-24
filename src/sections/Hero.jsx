@@ -56,6 +56,13 @@ const COLOR_CYCLE = [
   '#e9c46a',
 ]
 
+// How long to wait, after the preloader reports done, before the
+// hero animation timeline actually starts. Tweak this one number.
+const POST_INTRO_DELAY_MS = 2500
+
+// Path to the background video. Swap this for your own file in /public.
+const BG_VIDEO_SRC = '/hero-bg.mp4'
+
 export default function Hero({ introComplete = true }) {
   const heroRef = useRef(null)
   const portfolioRef = useRef(null)
@@ -66,9 +73,24 @@ export default function Hero({ introComplete = true }) {
   const imageInnerRef = useRef(null)
   const metaRef = useRef(null)
   const glowRef = useRef(null)
+  const videoRef = useRef(null)
 
   const keywordRefs = useRef([])
   const keywordTextRefs = useRef([])
+
+  // Belt-and-braces: some browsers (Safari in particular) can ignore
+  // the `autoPlay` attribute on first paint. Calling .play() explicitly
+  // covers that; the .catch() just swallows the "autoplay blocked"
+  // rejection some browsers throw if the tab isn't focused yet.
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    const playPromise = video.play()
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {})
+    }
+  }, [])
 
   useEffect(() => {
     if (!introComplete) return
@@ -90,6 +112,9 @@ export default function Hero({ introComplete = true }) {
 
     // =========================================
     // RESET
+    // This runs immediately (not after the delay) so every element
+    // is already hidden/positioned correctly while we wait out the
+    // post-intro pause. Prevents any flash of unstyled content.
     // =========================================
 
     gsap.killTweensOf([
@@ -144,375 +169,398 @@ export default function Hero({ introComplete = true }) {
       y: 15,
     })
 
+    // Declared up here so cleanup can always reach them, whether or
+    // not the delayed timeline has actually fired yet.
+    let tl = null
+    let listenersAttached = false
+    let handleImageMove
+    let handleImageLeave
+    let handleHeroMove
+
     // =========================================
-    // MASTER TIMELINE
+    // WAIT, THEN BUILD + PLAY THE TIMELINE
     // =========================================
 
-    const tl = gsap.timeline()
+    const delayId = setTimeout(() => {
+      // =========================================
+      // MASTER TIMELINE
+      // =========================================
 
-    // -----------------------------------------
-    // PORTFOLIO
-    // -----------------------------------------
+      tl = gsap.timeline()
 
-    tl.to(portfolio, {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: 'power3.out',
-    })
+      // -----------------------------------------
+      // PORTFOLIO
+      // -----------------------------------------
 
-    // -----------------------------------------
-    // NAME
-    // -----------------------------------------
-
-    tl.to(
-      name,
-      {
+      tl.to(portfolio, {
         opacity: 1,
         y: 0,
-        duration: 0.75,
-        ease: 'power3.out',
-      },
-      '-=0.35'
-    )
-
-    // -----------------------------------------
-    // LINKEDIN
-    // -----------------------------------------
-
-    tl.to(
-      linkedin,
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
+        duration: 1.6,
         ease: 'power2.out',
-      },
-      '-=0.4'
-    )
-
-    // =========================================
-    // IMAGE COMES FROM BELOW
-    // =========================================
-
-    tl.to(
-      image,
-      {
-        yPercent: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 2.2,
-        ease: 'power3.out',
-      },
-      '+=0.1'
-    )
-
-    // Small final settling motion
-    tl.to(image, {
-      y: -8,
-      duration: 0.35,
-      ease: 'power2.out',
-    })
-
-    tl.to(image, {
-      y: 0,
-      duration: 0.45,
-      ease: 'power2.inOut',
-    })
-
-    // =========================================
-    // AFTER IMAGE LANDS
-    // =========================================
-
-    tl.add('heroAlive')
-
-    // Meta appears
-    tl.to(
-      meta,
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: 'power3.out',
-      },
-      'heroAlive+=0.15'
-    )
-
-    // =========================================
-    // KEYWORD ENTRANCE
-    // =========================================
-
-    tl.to(
-      keywords,
-      {
-        opacity: 1,
-        scale: 1,
-        duration: 0.65,
-        ease: 'back.out(1.8)',
-        stagger: 0.12,
-      },
-      'heroAlive+=0.25'
-    )
-
-    // =========================================
-    // TYPEWRITER
-    // =========================================
-
-    tl.call(
-      () => {
-        keywords.forEach((keyword, i) => {
-          const textElement = keywordTexts[i]
-          const fullText = KEYWORDS[i].text
-
-          if (!textElement) return
-
-          const proxy = {
-            value: 0,
-          }
-
-          gsap.to(proxy, {
-            value: fullText.length,
-
-            duration: Math.max(
-              0.7,
-              fullText.length * 0.075
-            ),
-
-            delay: i * 0.18,
-
-            ease: 'none',
-
-            onUpdate: () => {
-              const currentLength = Math.floor(proxy.value)
-
-              textElement.textContent =
-                fullText.slice(0, currentLength)
-            },
-
-            onComplete: () => {
-              // =================================
-              // FLOATING MOTION
-              // =================================
-
-              gsap.to(keyword, {
-                y: i % 2 === 0 ? -10 : 10,
-                rotation:
-                  KEYWORDS[i].rotate +
-                  (i % 2 === 0 ? 2 : -2),
-
-                duration: 2.4 + i * 0.25,
-
-                ease: 'sine.inOut',
-
-                yoyo: true,
-                repeat: -1,
-
-                overwrite: false,
-              })
-
-              // =================================
-              // COLOR CYCLE
-              // =================================
-
-              gsap.to(textElement, {
-                keyframes: COLOR_CYCLE.map((color) => ({
-                  color,
-                })),
-
-                duration: 8 + i,
-
-                ease: 'sine.inOut',
-
-                repeat: -1,
-
-                repeatDelay: 0.2,
-              })
-            },
-          })
-        })
-      },
-      [],
-      'heroAlive+=0.45'
-    )
-
-    // =========================================
-    // IMAGE HOVER
-    // =========================================
-
-    const handleImageMove = (event) => {
-      const rect = image.getBoundingClientRect()
-
-      const mouseX =
-        event.clientX - rect.left
-
-      const mouseY =
-        event.clientY - rect.top
-
-      const normalizedX =
-        mouseX / rect.width - 0.5
-
-      const normalizedY =
-        mouseY / rect.height - 0.5
-
-      const rotateY =
-        normalizedX * 10
-
-      const rotateX =
-        normalizedY * -8
-
-      gsap.to(imageInner, {
-        x: normalizedX * 12,
-        y: normalizedY * 8,
-
-        rotationY: rotateY,
-        rotationX: rotateX,
-
-        scale: 1.025,
-
-        duration: 0.55,
-
-        ease: 'power3.out',
-
-        overwrite: 'auto',
       })
-    }
 
-    const handleImageLeave = () => {
-      gsap.to(imageInner, {
-        x: 0,
-        y: 0,
+      // -----------------------------------------
+      // NAME
+      // -----------------------------------------
 
-        rotationX: 0,
-        rotationY: 0,
-
-        scale: 1,
-
-        duration: 0.9,
-
-        ease: 'power3.out',
-
-        overwrite: 'auto',
-      })
-    }
-
-    // =========================================
-    // HERO MOUSE MOVEMENT
-    // =========================================
-
-    const handleHeroMove = (event) => {
-      const rect =
-        hero.getBoundingClientRect()
-
-      const mouseX =
-        event.clientX - rect.left
-
-      const mouseY =
-        event.clientY - rect.top
-
-      const centerX =
-        mouseX - rect.width / 2
-
-      const centerY =
-        mouseY - rect.height / 2
-
-      // ---------------------------------------
-      // GLOW
-      // ---------------------------------------
-
-      if (glow) {
-        gsap.to(glow, {
-          '--x': `${mouseX}px`,
-          '--y': `${mouseY}px`,
-
-          duration: 0.45,
-
+      tl.to(
+        name,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1.5,
           ease: 'power2.out',
+        },
+        '-=0.9'
+      )
+
+      // -----------------------------------------
+      // LINKEDIN
+      // -----------------------------------------
+
+      tl.to(
+        linkedin,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: 'power2.out',
+        },
+        '-=0.9'
+      )
+
+      // =========================================
+      // IMAGE COMES FROM BELOW
+      // Slowed way down so it drifts up rather than sliding in.
+      // =========================================
+
+      tl.to(
+        image,
+        {
+          yPercent: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 3.8,
+          ease: 'power2.out',
+        },
+        '+=0.2'
+      )
+
+      // Small final settling motion
+      tl.to(image, {
+        y: -10,
+        duration: 0.6,
+        ease: 'power2.out',
+      })
+
+      tl.to(image, {
+        y: 0,
+        duration: 0.8,
+        ease: 'power2.inOut',
+      })
+
+      // =========================================
+      // AFTER IMAGE LANDS
+      // =========================================
+
+      tl.add('heroAlive')
+
+      // Meta appears
+      tl.to(
+        meta,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power3.out',
+        },
+        'heroAlive+=0.15'
+      )
+
+      // =========================================
+      // KEYWORD ENTRANCE
+      // =========================================
+
+      tl.to(
+        keywords,
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.65,
+          ease: 'back.out(1.8)',
+          stagger: 0.12,
+        },
+        'heroAlive+=0.25'
+      )
+
+      // =========================================
+      // TYPEWRITER
+      // =========================================
+
+      tl.call(
+        () => {
+          keywords.forEach((keyword, i) => {
+            const textElement = keywordTexts[i]
+            const fullText = KEYWORDS[i].text
+
+            if (!textElement) return
+
+            const proxy = {
+              value: 0,
+            }
+
+            gsap.to(proxy, {
+              value: fullText.length,
+
+              duration: Math.max(
+                0.7,
+                fullText.length * 0.075
+              ),
+
+              delay: i * 0.18,
+
+              ease: 'none',
+
+              onUpdate: () => {
+                const currentLength = Math.floor(proxy.value)
+
+                textElement.textContent =
+                  fullText.slice(0, currentLength)
+              },
+
+              onComplete: () => {
+                // =================================
+                // FLOATING MOTION
+                // =================================
+
+                gsap.to(keyword, {
+                  y: i % 2 === 0 ? -10 : 10,
+                  rotation:
+                    KEYWORDS[i].rotate +
+                    (i % 2 === 0 ? 2 : -2),
+
+                  duration: 2.4 + i * 0.25,
+
+                  ease: 'sine.inOut',
+
+                  yoyo: true,
+                  repeat: -1,
+
+                  overwrite: false,
+                })
+
+                // =================================
+                // COLOR CYCLE
+                // =================================
+
+                gsap.to(textElement, {
+                  keyframes: COLOR_CYCLE.map((color) => ({
+                    color,
+                  })),
+
+                  duration: 8 + i,
+
+                  ease: 'sine.inOut',
+
+                  repeat: -1,
+
+                  repeatDelay: 0.2,
+                })
+              },
+            })
+          })
+        },
+        [],
+        'heroAlive+=0.45'
+      )
+
+      // =========================================
+      // IMAGE HOVER
+      // =========================================
+
+      handleImageMove = (event) => {
+        const rect = image.getBoundingClientRect()
+
+        const mouseX =
+          event.clientX - rect.left
+
+        const mouseY =
+          event.clientY - rect.top
+
+        const normalizedX =
+          mouseX / rect.width - 0.5
+
+        const normalizedY =
+          mouseY / rect.height - 0.5
+
+        const rotateY =
+          normalizedX * 10
+
+        const rotateX =
+          normalizedY * -8
+
+        gsap.to(imageInner, {
+          x: normalizedX * 12,
+          y: normalizedY * 8,
+
+          rotationY: rotateY,
+          rotationX: rotateX,
+
+          scale: 1.025,
+
+          duration: 0.55,
+
+          ease: 'power3.out',
 
           overwrite: 'auto',
         })
       }
 
-      // ---------------------------------------
-      // KEYWORD PARALLAX
-      // ---------------------------------------
+      handleImageLeave = () => {
+        gsap.to(imageInner, {
+          x: 0,
+          y: 0,
 
-      keywords.forEach((keyword, i) => {
-        const depth =
-          KEYWORDS[i].depth
+          rotationX: 0,
+          rotationY: 0,
 
-        gsap.to(keyword, {
-          x:
-            (centerX /
-              rect.width) *
-            45 *
-            depth,
+          scale: 1,
 
-          duration: 1,
+          duration: 0.9,
 
           ease: 'power3.out',
 
-          overwrite: false,
+          overwrite: 'auto',
         })
-      })
+      }
 
-      // ---------------------------------------
-      // VERY SUBTLE IMAGE PARALLAX
-      // ---------------------------------------
+      // =========================================
+      // HERO MOUSE MOVEMENT
+      // =========================================
 
-      gsap.to(image, {
-        x:
-          (centerX /
-            rect.width) *
-          8,
+      handleHeroMove = (event) => {
+        const rect =
+          hero.getBoundingClientRect()
 
-        duration: 1.2,
+        const mouseX =
+          event.clientX - rect.left
 
-        ease: 'power3.out',
+        const mouseY =
+          event.clientY - rect.top
 
-        overwrite: 'auto',
-      })
-    }
+        const centerX =
+          mouseX - rect.width / 2
 
-    // =========================================
-    // LISTENERS
-    // =========================================
+        const centerY =
+          mouseY - rect.height / 2
 
-    image.addEventListener(
-      'mousemove',
-      handleImageMove
-    )
+        // ---------------------------------------
+        // GLOW
+        // ---------------------------------------
 
-    image.addEventListener(
-      'mouseleave',
-      handleImageLeave
-    )
+        if (glow) {
+          gsap.to(glow, {
+            '--x': `${mouseX}px`,
+            '--y': `${mouseY}px`,
 
-    hero.addEventListener(
-      'mousemove',
-      handleHeroMove
-    )
+            duration: 0.45,
+
+            ease: 'power2.out',
+
+            overwrite: 'auto',
+          })
+        }
+
+        // ---------------------------------------
+        // KEYWORD PARALLAX
+        // ---------------------------------------
+
+        keywords.forEach((keyword, i) => {
+          const depth =
+            KEYWORDS[i].depth
+
+          gsap.to(keyword, {
+            x:
+              (centerX /
+                rect.width) *
+              45 *
+              depth,
+
+            duration: 1,
+
+            ease: 'power3.out',
+
+            overwrite: false,
+          })
+        })
+
+        // ---------------------------------------
+        // VERY SUBTLE IMAGE PARALLAX
+        // ---------------------------------------
+
+        gsap.to(image, {
+          x:
+            (centerX /
+              rect.width) *
+            8,
+
+          duration: 1.2,
+
+          ease: 'power3.out',
+
+          overwrite: 'auto',
+        })
+      }
+
+      // =========================================
+      // LISTENERS
+      // =========================================
+
+      image.addEventListener(
+        'mousemove',
+        handleImageMove
+      )
+
+      image.addEventListener(
+        'mouseleave',
+        handleImageLeave
+      )
+
+      hero.addEventListener(
+        'mousemove',
+        handleHeroMove
+      )
+
+      listenersAttached = true
+    }, POST_INTRO_DELAY_MS)
 
     // =========================================
     // CLEANUP
     // =========================================
 
     return () => {
-      tl.kill()
+      clearTimeout(delayId)
 
-      image.removeEventListener(
-        'mousemove',
-        handleImageMove
-      )
+      if (tl) {
+        tl.kill()
+      }
 
-      image.removeEventListener(
-        'mouseleave',
-        handleImageLeave
-      )
+      if (listenersAttached) {
+        image.removeEventListener(
+          'mousemove',
+          handleImageMove
+        )
 
-      hero.removeEventListener(
-        'mousemove',
-        handleHeroMove
-      )
+        image.removeEventListener(
+          'mouseleave',
+          handleImageLeave
+        )
+
+        hero.removeEventListener(
+          'mousemove',
+          handleHeroMove
+        )
+      }
 
       gsap.killTweensOf([
         portfolio,
@@ -534,6 +582,23 @@ export default function Hero({ introComplete = true }) {
       className="hero"
       ref={heroRef}
     >
+      {/* =====================================
+          BACKGROUND VIDEO
+      ===================================== */}
+
+      <video
+        ref={videoRef}
+        className="hero__bg-video"
+        src={BG_VIDEO_SRC}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+      />
+
+      <div className="hero__bg-overlay" />
+
       {/* CURSOR GLOW */}
       <div
         className="hero__glow"
@@ -555,28 +620,28 @@ export default function Hero({ introComplete = true }) {
           CENTERED IDENTITY
       ===================================== */}
 
-      <div
-        ref={identityRef}
-        className="hero__identity"
-      >
-        <h1
-          ref={nameRef}
-          className="hero__name"
-        >
-          BHOOMI CHAUDHARY
-        </h1>
+    <div
+  ref={identityRef}
+  className="hero__identity"
+>
+  <h1
+    ref={nameRef}
+    className="hero__name"
+  >
+    <span>BHOOMI</span>
+    <span>CHAUDHARY</span>
+  </h1>
 
-        <a
-          ref={linkedinRef}
-          className="hero__linkedin"
-          href="YOUR_ACTUAL_LINKEDIN_URL"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          LINKEDIN ↗
-        </a>
-      </div>
-
+  <a
+    ref={linkedinRef}
+    className="hero__linkedin"
+    href="YOUR_ACTUAL_LINKEDIN_URL"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    LINKEDIN ↗
+  </a>
+</div>
       {/* =====================================
           IMAGE + KEYWORDS
       ===================================== */}

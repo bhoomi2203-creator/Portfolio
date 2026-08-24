@@ -23,7 +23,7 @@ export default function Contact() {
 
       <div className="contact__bottom">
         <MagneticButton href="mailto:hello@kairenner.com" className="contact__email" strength={0.25}>
-          hello@kairenner.com
+
         </MagneticButton>
         <div className="contact__social">
           <a href="#top">Instagram</a>

@@ -22,10 +22,8 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "oxlint": "^1.75.0",
-<<<<<<< HEAD
     "sass-embedded": "^1.102.0",
-=======
->>>>>>> 06370cbf7ad20ea439c960141956021656949124
+
     "vite": "^8.2.0"
   }
 }

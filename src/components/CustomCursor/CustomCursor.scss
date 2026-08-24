@@ -1,59 +1,209 @@
-.cursor-dot,
-.cursor-ring {
+/* =========================================
+   CUSTOM CURSOR
+========================================= */
+
+.cursor-star {
   position: fixed;
-  top: 0;
+
   left: 0;
+  top: 0;
+
+  width: 34px;
+  height: 34px;
+
+  z-index: 99999;
+
   pointer-events: none;
-  z-index: var(--z-cursor);
-  transform: translate(-50%, -50%);
-}
 
-.cursor-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--ink);
-}
+  transform:
+    translate(-50%, -50%)
+    rotate(-8deg);
 
-.cursor-ring {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--ink);
+  will-change: transform, left, top;
+
   display: flex;
+
   align-items: center;
   justify-content: center;
+
   transition:
-    width var(--dur-fast) ease,
-    height var(--dur-fast) ease,
-    background var(--dur-fast) ease,
-    border-color var(--dur-fast) ease;
+    width 0.3s ease,
+    height 0.3s ease,
+    opacity 0.3s ease;
+}
 
-  &__label {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    opacity: 0;
-    color: var(--paper);
-    transition: opacity var(--dur-fast) ease;
+
+/* =========================================
+   HAND-DRAWN STAR
+========================================= */
+
+.cursor-star__svg {
+  width: 100%;
+  height: 100%;
+
+  overflow: visible;
+
+  transform:
+    rotate(-12deg);
+
+  filter:
+    drop-shadow(
+      0 1px 1px rgba(0, 0, 0, 0.08)
+    );
+}
+
+
+.cursor-star__path {
+  fill: var(--ink);
+
+  stroke: var(--ink);
+
+  stroke-width: 1.5;
+
+  stroke-linejoin: round;
+
+  vector-effect: non-scaling-stroke;
+}
+
+
+/* =========================================
+   SUBTLE HAND-DRAWN MOTION
+========================================= */
+
+.cursor-star__svg {
+  animation:
+    cursorStarFloat
+    2.4s
+    ease-in-out
+    infinite;
+}
+
+@keyframes cursorStarFloat {
+  0%,
+  100% {
+    transform:
+      rotate(-12deg)
+      scale(1);
   }
 
-  &--link,
-  &--view {
-    width: 88px;
-    height: 88px;
-    background: var(--ink);
-    border-color: var(--ink);
+  50% {
+    transform:
+      rotate(-5deg)
+      scale(1.08);
+  }
+}
 
-    .cursor-ring__label {
-      opacity: 1;
-    }
+
+/* =========================================
+   LABEL
+========================================= */
+
+.cursor-star__label {
+  position: absolute;
+
+  top: 100%;
+  left: 50%;
+
+  transform:
+    translateX(-50%)
+    translateY(6px);
+
+  font-family:
+    'Helvetica Neue',
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  font-size: 8px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.08em;
+
+  white-space: nowrap;
+
+  color: var(--ink);
+}
+
+
+/* =========================================
+   HOVER VARIANTS
+========================================= */
+
+.cursor-star--hover {
+  width: 48px;
+  height: 48px;
+}
+
+.cursor-star--hover .cursor-star__path {
+  fill: transparent;
+
+  stroke: var(--ink);
+
+  stroke-width: 2;
+}
+
+
+.cursor-star--link {
+  width: 44px;
+  height: 44px;
+}
+
+.cursor-star--link .cursor-star__path {
+  fill: var(--ink);
+}
+
+
+/* =========================================
+   IMAGE / PROJECT VARIANT
+========================================= */
+
+.cursor-star--view {
+  width: 58px;
+  height: 58px;
+}
+
+.cursor-star--view .cursor-star__path {
+  fill: transparent;
+
+  stroke: var(--ink);
+
+  stroke-width: 2;
+}
+
+
+/* =========================================
+   HIDE NATIVE CURSOR
+========================================= */
+
+body.cursor-active,
+body.cursor-active * {
+  cursor: none !important;
+}
+
+
+/* =========================================
+   TOUCH DEVICES
+========================================= */
+
+@media (hover: none) {
+  .cursor-star {
+    display: none;
   }
 
-  &--view {
-    background: var(--moss);
-    border-color: var(--moss);
+  body.cursor-active,
+  body.cursor-active * {
+    cursor: auto !important;
+  }
+}
+
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-star__svg {
+    animation: none;
   }
 }

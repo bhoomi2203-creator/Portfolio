@@ -38,7 +38,7 @@ export default function Navbar() {
     <>
       <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''} ${hidden ? 'navbar--hidden' : ''}`}>
         <Link to="/" className="navbar__logo">
-          Kai <em>Renner</em>
+           <em></em>
         </Link>
 
         <ul className="navbar__links">

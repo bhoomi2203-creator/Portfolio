@@ -10,10 +10,46 @@
 
   overflow: hidden;
 
+  /* Fallback color shows instantly, before the video has a frame
+     ready to paint, and stays visible if the video fails to load. */
   background: var(--paper);
   color: var(--ink);
 
   perspective: 1200px;
+}
+
+/* =========================================
+   BACKGROUND VIDEO
+========================================= */
+
+.hero__bg-video {
+  position: absolute;
+  inset: 0;
+
+  z-index: -2;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  pointer-events: none;
+}
+
+/* Sits between the video and the foreground content so text/keywords
+   stay readable over busy footage. Tune the alpha or swap for a
+   gradient if a flat tint isn't the look you want. */
+.hero__bg-overlay {
+  position: absolute;
+  inset: 0;
+
+  z-index: -1;
+
+  pointer-events: none;
+
+  background: var(--paper);
+  opacity: 0.55;
 }
 
 
@@ -52,26 +88,22 @@
 .hero__portfolio {
   position: absolute;
 
-  top: 38px;
+  top: 32px;
   left: 50%;
 
   transform: translateX(-50%);
 
   z-index: 20;
 
-  font-family: 'League Spartan', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
-  font-size: clamp(
-    38px,
-    4.5vw,
-    64px
-  );
+  font-size: clamp(14px, 1.2vw, 18px);
 
-  font-weight: 700;
+  font-weight: 800;
 
-  line-height: 0.9;
+  line-height: 1;
 
-  letter-spacing: -0.055em;
+  letter-spacing: 0.18em;
 
   white-space: nowrap;
 
@@ -82,16 +114,16 @@
 
 
 /* =========================================
-   IDENTITY
+   IDENTITY — BELOW NAVBAR / LEFT
 ========================================= */
 
 .hero__identity {
   position: absolute;
 
-  top: 108px;
-  left: 50%;
+  top: 105px;
+  left: 6%;
 
-  transform: translateX(-50%);
+  transform: none;
 
   z-index: 20;
 
@@ -100,9 +132,9 @@
   display: flex;
   flex-direction: column;
 
-  align-items: center;
+  align-items: flex-start;
 
-  text-align: center;
+  text-align: left;
 
   pointer-events: none;
 }
@@ -115,23 +147,37 @@
 .hero__name {
   margin: 0;
 
-  font-family: 'League Spartan', sans-serif;
+  font-family: Georgia, 'Times New Roman', serif;
 
   font-size: clamp(
-    32px,
-    4.1vw,
-    62px
+    42px,
+    5vw,
+    78px
   );
 
-  font-weight: 500;
+  font-weight: 400;
 
   letter-spacing: -0.055em;
 
-  line-height: 0.9;
+  line-height: 0.88;
 
   white-space: nowrap;
 
+  text-transform: uppercase;
+
   opacity: 0;
+}
+
+.hero__name span {
+  display: block;
+}
+
+.hero__name span:first-child {
+  font-style: italic;
+}
+
+.hero__name span:last-child {
+  font-style: normal;
 }
 
 
@@ -140,7 +186,7 @@
 ========================================= */
 
 .hero__linkedin {
-  margin-top: 18px;
+  margin-top: 16px;
 
   pointer-events: auto;
 
@@ -148,13 +194,15 @@
 
   text-decoration: none;
 
-  font-family: 'League Spartan', sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
-  font-size: 11px;
+  font-size: 9px;
 
-  font-weight: 600;
+  font-weight: 500;
 
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
+
+  opacity: 0;
 
   transition:
     opacity 0.3s ease,
@@ -163,10 +211,8 @@
 
 .hero__linkedin:hover {
   opacity: 0.55;
-
   transform: translateY(-2px);
 }
-
 
 /* =========================================
    STAGE
@@ -220,6 +266,16 @@
   pointer-events: auto;
 
   will-change: transform;
+
+  /* CSS fallback so the image is already hidden the instant the
+     page paints, before GSAP's JS has a chance to run its own
+     gsap.set() reset. Without this there can be a one-frame flash
+     of the fully visible image while the preloader/post-intro
+     delay is still running. GSAP's inline styles override this
+     the moment the effect runs, so it never conflicts with the
+     animation itself. */
+  opacity: 0;
+  transform: translateY(115%) scale(0.92);
 }
 
 
@@ -521,11 +577,13 @@
 
 @media (max-width: 900px) {
   .hero__portfolio {
-    top: 30px;
+    top: 4%;
+    font-size: 11px;
   }
 
   .hero__identity {
-    top: 95px;
+    top: 50%;
+    left: 5%;
   }
 
   .hero__stage {
@@ -554,23 +612,22 @@
 ========================================= */
 
 @media (max-width: 600px) {
-  .hero {
-    min-height: 650px;
-  }
-
   .hero__portfolio {
     top: 25px;
-
-    font-size: 38px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
   }
 
   .hero__identity {
-    top: 80px;
+    top: 85px;
+    left: 5%;
   }
 
   .hero__name {
-    font-size: 31px;
+    font-size: clamp(32px, 10vw, 52px);
   }
+}
 
   .hero__stage {
     bottom: 0;
@@ -626,4 +683,3 @@
   .hero__scroll {
     display: none;
   }
-}
